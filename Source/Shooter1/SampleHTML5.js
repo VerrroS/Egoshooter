@@ -5,44 +5,44 @@ var UE_SampleHTML5 = {
     SampleHTML5_RegisterStringFunction: function (listener) {
         // save a reference to the listener to later call back into C++
         UE_JSSampleHTML5.Callback_RegisterStringFunction = function (str) {
-            var cname = _malloc(str.length + 1);
-            stringToUTF8(str, cname, str.length + 1);
-            dynCall('vi', listener, [cname]);
-   
+            var cname = _malloc(str.length + 1)
+            stringToUTF8(str, cname, str.length + 1)
+            dynCall("vi", listener, [cname])
         }
     },
     // function to be called from C++
     UE_InitSampleHTML5: function () {
-        UE_JSSampleHTML5.UE_InitSampleHTML5();
+        UE_JSSampleHTML5.UE_InitSampleHTML5()
     },
     // persistant OBJECT accessible within JS code
     $UE_JSSampleHTML5: {
         UE_InitSampleHTML5: function () {
-            console.log('UE_InitSampleHTML5');
+            console.log("UE_InitSampleHTML5")
 
+            navigator.getUserMedia =
+                navigator.getUserMedia ||
+                navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia ||
+                navigator.msGetUserMedia ||
+                navigator.oGetUserMedia
 
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({ video: true }, handleVideo, videoError)
+            }
 
+            function handleVideo() {
+                alert("it works!!!")
+            }
 
-if(navigator.getUserMedia){
-  navigator.getUserMedia({video: true}, handleVideo, videoError);
-}
-
-  function handleVideo(){
-  alert("it works!!!");
-
-  }
-
-  function videoError (e){
-    alert("There is a problem...");
-  }
-
+            function videoError(e) {
+                alert("There is a problem...")
+            }
 
             // Invoke C++ from JS
-            this.Callback_RegisterStringFunction('Invoking callback!');
-        }
-    }
-};
+            this.Callback_RegisterStringFunction("Invoking callback!")
+        },
+    },
+}
 
-autoAddDeps(UE_SampleHTML5, '$UE_JSSampleHTML5');
-mergeInto(LibraryManager.library, UE_SampleHTML5);
+autoAddDeps(UE_SampleHTML5, "$UE_JSSampleHTML5")
+mergeInto(LibraryManager.library, UE_SampleHTML5)
